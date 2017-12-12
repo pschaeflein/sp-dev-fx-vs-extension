@@ -1,80 +1,199 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
+﻿using Framework.VSIX.Resources;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using Framework.VSIX.Resources;
+using System.IO;
+using System.Text;
 
 namespace Framework.VSIX
 {
-    public class Utility
-    {
-        public static string GetGeneratorVersion()
-        {
-            string result = string.Empty;
+	public static class Utility
+	{
+		#region Application Insights
 
-            try
-            {
-                StringBuilder outputText = new StringBuilder();
+		public static string AppInsightsKey = "0475a9f1-215a-41a9-860e-c9c9a337868c";
 
-                using (var proc = new System.Diagnostics.Process())
-                {
-                    proc.StartInfo.FileName = @"cmd.exe";
-                    proc.StartInfo.Arguments = string.Format(@" /c  {0}", Global.Yeoman_Generator_VersionCheck);
-                    proc.StartInfo.RedirectStandardInput = true;
-                    proc.StartInfo.RedirectStandardOutput = true;
-                    proc.StartInfo.RedirectStandardError = true;
-                    proc.StartInfo.CreateNoWindow = true;
-                    proc.StartInfo.UseShellExecute = false;
-                    proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    proc.Start();
+		#endregion
 
-                    proc.StandardInput.Flush();
-                    proc.StandardInput.WriteLine("exit");
-                    proc.StandardInput.Flush();
+		#region Generator Version
 
-                    using (StreamReader reader = proc.StandardOutput)
-                    {
-                        string _val = reader.ReadToEnd();
-                        outputText.Append(_val);
-                    }
+		public static Version gv1_0 = new Version(1, 0);
+		public static Version gv1_1 = new Version(1, 1);
+		public static Version gv1_3 = new Version(1, 3);
+		private static Version installedGeneratorVersion = null;
+		public static Version InstalledGeneratorVersion
+		{
+			get
+			{
+				if (installedGeneratorVersion == null)
+				{
+					installedGeneratorVersion = GetGeneratorVersion();
+				}
+				return installedGeneratorVersion;
+			}
+		}
 
-                    result = Regex.Replace(outputText.ToString(), "[^0-9.]", "");
-                }
-            }
-            catch (System.Exception ex)
-            {
-                //TODO: Log exception
-            }
+		private static Version GetGeneratorVersion()
+		{
+			Version result = new Version(0, 0);
+			string versionString = string.Empty;
 
-            return result;
-        }
+			try
+			{
+				StringBuilder outputText = new StringBuilder();
 
-        public static int CompareGeneratorVersions(string baseVersion, string currentVersion)
-        {
-            int result = 0;
+				using (var proc = new System.Diagnostics.Process())
+				{
+					proc.StartInfo.FileName = @"cmd.exe";
+					proc.StartInfo.Arguments = string.Format(@" /c  {0}", Global.Yeoman_Generator_VersionCheck);
+					proc.StartInfo.RedirectStandardInput = true;
+					proc.StartInfo.RedirectStandardOutput = true;
+					proc.StartInfo.RedirectStandardError = true;
+					proc.StartInfo.CreateNoWindow = true;
+					proc.StartInfo.UseShellExecute = false;
+					proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+					proc.Start();
 
-            if (!string.IsNullOrEmpty(baseVersion) && !string.IsNullOrEmpty(currentVersion))
-            {
-                var bv = new Version(baseVersion);
-                var cv = new Version(currentVersion);
+					proc.StandardInput.Flush();
+					proc.StandardInput.WriteLine("exit");
+					proc.StandardInput.Flush();
 
-                result = cv.CompareTo(bv);
-            }
+					using (StreamReader reader = proc.StandardOutput)
+					{
+						string _val = reader.ReadToEnd();
+						outputText.Append(_val);
+					}
 
-            return result;
-        }
+					JObject packageJson = JObject.Parse(outputText.ToString());
+					JToken version = packageJson["dependencies"]["@microsoft/generator-sharepoint"]["version"];
+					versionString = version.Value<string>();
 
-        public static bool CheckGeneratorVersion(string baseVersion)
-        {
-            string curVersion = GetGeneratorVersion();
-            int curVal = CompareGeneratorVersions(baseVersion, curVersion);
-            bool result = curVal >= 0 ? true : false;
-            return result;
-        }
+					if (!String.IsNullOrEmpty(versionString))
+					{
+                        try
+                        {
+                            result = new Version(versionString);
+                        }
+                        catch (Exception)
+                        {
+                            // This means that package existing with version value, but it contained non-number values. 
+                            // Edge scenario, but can happen with pre-release versions. We'll default to latest version.
+                            result = gv1_3;
+                        }
+						
+					}
+				}
+			}
+			catch (System.Exception ex)
+			{
+				//TODO: Log exception - no hidden to provide null value back
+			}
 
-    }
+			return result;
+		}
+
+		#endregion
+
+		#region Set Command line
+
+		public static bool SetItemCommand(string Framework, string ComponentName,
+																			string ComponentDescription, string ComponentType,
+																			string ExtensionType, out string command)
+		{
+			command = String.Empty;
+			bool result = true;
+
+			if (String.IsNullOrEmpty(ComponentName))
+				result = false;
+			if (String.IsNullOrEmpty(ComponentDescription))
+				result = false;
+			if (String.IsNullOrEmpty(ComponentType))
+				result = false;
+			if (ComponentType == "webpart" && String.IsNullOrEmpty(Framework))
+				result = false;
+			if (ComponentType == "extension" && String.IsNullOrEmpty(ExtensionType))
+				result = false;
+			if (ComponentType == "extension" && ExtensionType == "FieldCustomizer" && String.IsNullOrEmpty(Framework))
+				result = false;
+
+			command = SetCommand(null, Framework, ComponentName, ComponentDescription,
+													 ComponentType, ExtensionType, null, false, false);
+			return result;
+		}
+
+		public static bool SetProjectCommand(string SolutionName, string Framework, string ComponentName,
+																				 string ComponentDescription, string ComponentType, string ExtensionType,
+																				 string Environment, bool SkipFeatureDeployment, bool SkipInstall,
+																				 out string command)
+		{
+			command = String.Empty;
+			bool result = true;
+
+			if (String.IsNullOrEmpty(SolutionName))
+				result = false;
+			if (String.IsNullOrEmpty(Framework))
+				result = false;
+			if (String.IsNullOrEmpty(ComponentName))
+				result = false;
+			if (String.IsNullOrEmpty(ComponentDescription))
+				result = false;
+			if (String.IsNullOrEmpty(ComponentType))
+				result = false;
+			if (ComponentType == "extension" && String.IsNullOrEmpty(ExtensionType))
+				result = false;
+			if (Utility.InstalledGeneratorVersion >= gv1_3 && String.IsNullOrEmpty(Environment))
+				result = false;
+
+			command = SetCommand(SolutionName, Framework, ComponentName, ComponentDescription,
+													 ComponentType, ExtensionType, Environment, SkipFeatureDeployment, SkipInstall);
+			return result;
+		}
+
+			private static string SetCommand(string SolutionName, string Framework, string ComponentName,
+																			 string ComponentDescription, string ComponentType, string ExtensionType,
+																			 string Environment, bool SkipFeatureDeployment, bool SkipInstall)
+			{
+			StringBuilder commandBuilder = new StringBuilder();
+			commandBuilder.Append($"yo @microsoft/sharepoint");
+
+			if (!String.IsNullOrEmpty(SolutionName))
+				commandBuilder.Append($" --solutionName \"{SolutionName}\"");
+
+			if (!String.IsNullOrEmpty(ComponentName))
+				commandBuilder.Append($" --componentName \"{ComponentName}\"");
+
+			if (!String.IsNullOrEmpty(ComponentDescription))
+				commandBuilder.Append($" --componentDescription \"{ComponentDescription}\"");
+
+			if (!String.IsNullOrEmpty(ComponentType))
+				commandBuilder.Append($" --componentType \"{ComponentType}\"");
+
+			if (!String.IsNullOrEmpty(Framework))
+				commandBuilder.Append($" --framework \"{Framework}\"");
+
+			if (SkipInstall)
+				commandBuilder.Append(" --skip-install");
+
+			if (Utility.InstalledGeneratorVersion >= gv1_3)
+			{
+				if (!String.IsNullOrEmpty(Environment))
+					commandBuilder.Append($" --environment \"{Environment}\"");
+			}
+
+			if (Utility.InstalledGeneratorVersion >= gv1_1)
+			{
+				if (ComponentType=="extension")
+				{
+					if (!String.IsNullOrEmpty(ExtensionType))
+						commandBuilder.Append($" --extensionType \"{ExtensionType}\"");
+				}
+
+				commandBuilder.AppendFormat(" skipFeatureDeployment {0}", SkipFeatureDeployment ? "true" : "false");
+			}
+
+			return commandBuilder.ToString();
+		}
+		#endregion
+
+	}
 }

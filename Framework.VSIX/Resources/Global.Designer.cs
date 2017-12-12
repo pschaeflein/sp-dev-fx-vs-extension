@@ -19,7 +19,7 @@ namespace Framework.VSIX.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Global {
@@ -143,6 +143,15 @@ namespace Framework.VSIX.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ComponentType:.
+        /// </summary>
+        internal static string Form_ComponentType {
+            get {
+                return ResourceManager.GetString("Form_ComponentType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to One or more required fields are empty..
         /// </summary>
         internal static string Form_EmptyFieldMessage {
@@ -152,7 +161,25 @@ namespace Framework.VSIX.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to NOTE: Running the generator may take some time. Please wait while the process completes..
+        ///   Looks up a localized string similar to Environment:.
+        /// </summary>
+        internal static string Form_Environment {
+            get {
+                return ResourceManager.GetString("Form_Environment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Extension Type:.
+        /// </summary>
+        internal static string Form_ExtensionType {
+            get {
+                return ResourceManager.GetString("Form_ExtensionType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NOTE: If you don&apos;t skip &apos;npm install&apos;, running the generator may take up to 5-7 minutes. You should wait until it completes. .
         /// </summary>
         internal static string Form_Footer_GeneratorText {
             get {
@@ -224,11 +251,20 @@ namespace Framework.VSIX.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show command window.
+        ///   Looks up a localized string similar to Show command window (if checked, you&apos;ll need to exit from command window when execute in completed).
         /// </summary>
-        internal static string Form_ShowCommandWIndow {
+        internal static string Form_ShowCommandWindow {
             get {
-                return ResourceManager.GetString("Form_ShowCommandWIndow", resourceCulture);
+                return ResourceManager.GetString("Form_ShowCommandWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Skip Feature Deployment.
+        /// </summary>
+        internal static string Form_SkipFeatureDeployment {
+            get {
+                return ResourceManager.GetString("Form_SkipFeatureDeployment", resourceCulture);
             }
         }
         
@@ -269,7 +305,7 @@ namespace Framework.VSIX.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to npm view @microsoft/generator-sharepoint version.
+        ///   Looks up a localized string similar to npm list @microsoft/generator-sharepoint -g -json.
         /// </summary>
         internal static string Yeoman_Generator_VersionCheck {
             get {
@@ -301,6 +337,33 @@ namespace Framework.VSIX.Resources {
         internal static string Yeoman_Project_CommandString {
             get {
                 return ResourceManager.GetString("Yeoman_Project_CommandString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to yo @microsoft/sharepoint --solutionName &quot;{0}&quot;  --framework &quot;{1}&quot; --componentName &quot;{2}&quot; --componentDescription &quot;{3}&quot; {4}.
+        /// </summary>
+        internal static string Yeoman_Project_CommandString_1_0 {
+            get {
+                return ResourceManager.GetString("Yeoman_Project_CommandString_1_0", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to yo @microsoft/sharepoint --solutionName &quot;{0}&quot;  --framework &quot;{1}&quot; --componentName &quot;{2}&quot; --componentDescription &quot;{3}&quot; --componentType &quot;webpart&quot; {4}.
+        /// </summary>
+        internal static string Yeoman_Project_CommandString_1_1 {
+            get {
+                return ResourceManager.GetString("Yeoman_Project_CommandString_1_1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to yo @microsoft/sharepoint --solutionName &quot;{0}&quot;  --framework &quot;{1}&quot; --componentName &quot;{2}&quot; --componentDescription &quot;{3}&quot; --componentType &quot;{5}&quot; {4}.
+        /// </summary>
+        internal static string Yeoman_Project_CommandString_1_3 {
+            get {
+                return ResourceManager.GetString("Yeoman_Project_CommandString_1_3", resourceCulture);
             }
         }
         
