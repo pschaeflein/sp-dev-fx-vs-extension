@@ -10,7 +10,7 @@ namespace Framework.VSIX
 	{
 		#region Application Insights
 
-		public static string AppInsightsKey = "0475a9f1-215a-41a9-860e-c9c9a337868c";
+		public static string AppInsightsKey = "3d7344cb-3530-4bd5-ae5a-5dc624e4084d";//"0475a9f1-215a-41a9-860e-c9c9a337868c";
 
 		#endregion
 
@@ -92,33 +92,29 @@ namespace Framework.VSIX
 			if (SkipInstall)
 				commandBuilder.Append(" --skip-install");
 
-            if (PlusBeta)
-                commandBuilder.Append(" --plusbeta");
+						if (PlusBeta)
+								commandBuilder.Append(" --plusbeta");
 
-            if (!String.IsNullOrEmpty(Environment))
-                commandBuilder.Append($" --environment \"{Environment}\"");
+						if (!String.IsNullOrEmpty(Environment))
+								commandBuilder.Append($" --environment \"{Environment}\"");
 
-            if (!String.IsNullOrEmpty(ExtensionType))
-            	commandBuilder.Append($" --extension-type \"{ExtensionType}\"");
+						if (!String.IsNullOrEmpty(ExtensionType))
+							commandBuilder.Append($" --extension-type \"{ExtensionType}\"");
 
-            if (!String.IsNullOrEmpty(PackageManager))
-            {
-                commandBuilder.Append($" --package-manager \"{PackageManager}\"");
-            }
+						if (!String.IsNullOrEmpty(PackageManager))
+						{
+								commandBuilder.Append($" --package-manager \"{PackageManager}\"");
+						}
 
-            if (SkipFeatureDeployment)
-                commandBuilder.Append(" --skip-feature-deployment true");
-            else
-                commandBuilder.Append(" --skip-feature-deployment false");
+						if (SkipFeatureDeployment)
+								commandBuilder.Append(" --skip-feature-deployment");
 
-            if (DomainIsolated)
-                commandBuilder.Append(" --is-domain-isolated true");
-            else
-                commandBuilder.Append(" --is-domain-isolated false");
+						if (DomainIsolated)
+								commandBuilder.Append(" --is-domain-isolated");
 
-            commandBuilder.Append(" --skip-cache");
+						commandBuilder.Append(" --skip-cache");
 
-            return commandBuilder.ToString();
+						return commandBuilder.ToString();
 		}
 		#endregion
 
